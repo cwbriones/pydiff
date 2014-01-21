@@ -35,6 +35,18 @@ class Diff(object):
         """
         return self._table[-1][-1]
 
+    def lcs(self):
+        """
+        Returns the longest common subsequence (or the first one it finds)
+        """
+        return self._backtrack(len(self.str1)-1, len(self.str2)-1)
+
+    def _backtrack(self, i, j):
+        """
+        Backtracks to build the LCS from the table computed.
+        """
+        return ""
+
 def main(argv):
     """
     Entry point.

@@ -12,6 +12,7 @@ class DiffIdenticalStringsTest(unittest.TestCase):
 
     def test_lcs_is_the_whole_thing(self):
         self.assertEqual(self.diff.lcs_length(), len(self.str))
+        self.assertEqual(self.diff.lcs(), self.str)
 
 if __name__ == '__main__':
     unittest.main()
