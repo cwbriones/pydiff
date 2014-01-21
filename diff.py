@@ -20,6 +20,13 @@ class Diff(object):
         Computes the subsequence table.
         """
         table = [[0] * len(str2)] * len(str1)
+        for (i, char1) in enumerate(str1):
+            for (j, char2) in enumerate(str2):
+                if char1 == char2:
+                    table[i][j] = table[i-1][j-1] + 1
+                else:
+                    table[i][j] = max(table[i-1][j], table[i][j-1])
+
         return table
 
     def lcs_length(self):
