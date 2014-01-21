@@ -4,11 +4,15 @@ import unittest
 class DiffIdenticalStringsTest(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.str = "abcd"
+        self.diff = diff.Diff(self.str, self.str)
 
     def test_length_is_nonzero(self):
-        test = diff.Diff("abcd", "abcd")
-        self.assertGreater(test.lcs_length(), 0)
+        self.assertGreater(self.diff.lcs_length(), 0)
+
+    def test_lcs_is_the_whole_thing(self):
+        self.assertEqual(self.diff.lcs_length(), len(self.str))
+
 
 if __name__ == '__main__':
     unittest.main()
