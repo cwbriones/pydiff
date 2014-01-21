@@ -41,22 +41,22 @@ class Diff(object):
         """
         return self._backtrack(len(self.str1)-1, len(self.str2)-1)
 
-    def _backtrack(self, i, j):
+    def _backtrack(self, i, j, chars=[]):
         """
         Backtracks to build the LCS from the table computed.
         """
         if i == 0 or j == 0:
-            if self.str1[i] == self.str2[j]:
-                return self.str1[i]
-            else:
-                return ""
+            if self.str1[0] == self.str2[0]:
+                chars.insert(0, self.str1[0])
+            return ''.join(chars)
         elif self.str1[i] == self.str2[j]:
-            return self._backtrack(i-1, j-1) + self.str1[i]
+            chars.insert(0, self.str1[i])
+            return self._backtrack(i-1, j-1, chars)
         else:
             if self._table[i][j-1] > self._table[i-1][j]:
-                return self._backtrack(i, j-1)
+                return self._backtrack(i, j-1, chars)
             else:
-                return self._backtrack(i-1, j)
+                return self._backtrack(i-1, j, chars)
 
 def main(argv):
     """
