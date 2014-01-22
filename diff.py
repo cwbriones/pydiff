@@ -12,8 +12,25 @@ class Diff(object):
     def __init__(self, str1, str2):
         self.str1 = str1
         self.str2 = str2
+
+        self._prefix = ""
+        self._suffix = ""
         
         self._table = self._compute_table(str1, str2)
+
+    def _get_shared_prefix(self, str1, str2):
+        """
+        Returns the longest continuous substring shared by
+        both strings starting from the front.
+        """
+        return ""
+
+    def _get_shared_suffix(self, str1, str2):
+        """
+        Returns the longest continuous substring shared by
+        both strings ending at the back.
+        """
+        return ""
 
     def _compute_table(self, str1, str2):
         """
