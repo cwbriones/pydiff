@@ -13,17 +13,24 @@ class Diff(object):
         self.str1 = str1
         self.str2 = str2
 
-        self._prefix = ""
-        self._suffix = ""
-        
-        self._table = self._compute_table(str1, str2)
+        self._prefix = self._get_shared_prefix()
+        self._trim_prefix()
+        self._suffix = self._get_shared_suffix()
+        self._trim_suffix()
 
-    def _get_shared_prefix(self, str1, str2):
+        self._table = self._compute_table(self.str1, self.str2)
+
+    def _get_shared_prefix(self):
         """
         Returns the longest continuous substring shared by
         both strings starting from the front.
         """
-        return ""
+        prefix = []
+        for (char1, char2) in zip(self.str1, self.str2):
+            if char1 != char2:
+                break
+            prefix.append(char1)
+        return "".join(prefix)
 
     def _get_shared_suffix(self):
         """
@@ -36,6 +43,25 @@ class Diff(object):
                 break
             suffix.insert(0, char1)
         return "".join(suffix)
+
+    def _trim_prefix(self):
+        """
+        Removes the shared prefix and suffix from the input strings.
+        """
+        start = len(self._prefix)
+
+        self.str1 = self.str1[start:]
+        self.str2 = self.str2[start:]
+
+    def _trim_suffix(self):
+        """
+        Removes the shared suffix from the input strings.
+        """
+        end = len(self._suffix) * -1
+
+        if end != 0:
+            self.str1 = self.str1[:end]
+            self.str2 = self.str2[:end]
 
     def _compute_table(self, str1, str2):
         """
@@ -55,13 +81,20 @@ class Diff(object):
         """
         Returns the length of the longest common subsequence.
         """
-        return self._table[-1][-1]
+        length = len(self._prefix) + len(self._suffix)
+        if (self.str1 != '' and self.str2 != ''):
+            length += self._table[-1][-1]
+        return length
 
     def lcs(self):
         """
         Returns the longest common subsequence (or the first one it finds)
         """
-        return self._backtrack(len(self.str1)-1, len(self.str2)-1)
+        if (self.str1 != '' and self.str2 != ''):
+            lcs = self._backtrack(len(self.str1)-1, len(self.str2)-1)
+        else:
+            lcs = ''
+        return self._prefix + lcs + self._suffix
 
     def _backtrack(self, i, j, chars=[]):
         """
