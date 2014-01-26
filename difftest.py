@@ -25,8 +25,24 @@ class SharedSuffixTest(unittest.TestCase):
     def test_get_shared_suffix(self):
         self.assertEqual(self.diff._get_shared_suffix(), self.suffix)
 
+    def test_no_shared_suffix(self):
+        self.diff = diff.Diff("abcd", "efgh")
+        self.assertEqual("", self.diff._get_shared_suffix())
+
 class SharedPrefixTest(unittest.TestCase):
-    pass
+
+    def setUp(self):
+        self.prefix = "thisisareallylongsuffix"
+        self.str1 = self.prefix + "aaaaaaaa"
+        self.str2 = self.prefix + "bbbbbbbb"
+        self.diff = diff.Diff(self.str1, self.str2)
+
+    def test_get_shared_prefix(self):
+        self.assertEqual(self.diff._get_shared_prefix(), self.prefix)
+
+    def test_no_shared_prefix(self):
+        self.diff = diff.Diff("abcd", "efgh")
+        self.assertEqual("", self.diff._get_shared_prefix())
 
 class SharedPrefixSuffixTest(unittest.TestCase):
     pass
