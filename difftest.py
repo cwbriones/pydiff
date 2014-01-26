@@ -14,5 +14,22 @@ class DiffIdenticalStringsTest(unittest.TestCase):
         self.assertEqual(self.diff.lcs_length(), len(self.str))
         self.assertEqual(self.diff.lcs(), self.str)
 
+class SharedSuffixTest(unittest.TestCase):
+
+    def setUp(self):
+        self.suffix = "thisisareallylongsuffix"
+        self.str1 = "aaaaaaaa" + self.suffix
+        self.str2 = "bbbbbbbb" + self.suffix
+        self.diff = diff.Diff(self.str1, self.str2)
+
+    def test_get_shared_suffix(self):
+        self.assertEqual(self.diff._get_shared_suffix(), self.suffix)
+
+class SharedPrefixTest(unittest.TestCase):
+    pass
+
+class SharedPrefixSuffixTest(unittest.TestCase):
+    pass
+
 if __name__ == '__main__':
     unittest.main()

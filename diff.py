@@ -25,7 +25,7 @@ class Diff(object):
         """
         return ""
 
-    def _get_shared_suffix(self, str1, str2):
+    def _get_shared_suffix(self):
         """
         Returns the longest continuous substring shared by
         both strings ending at the back.
