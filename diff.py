@@ -3,6 +3,38 @@ Python implementation of diff.
 """
 import sys
 
+class Diff(object):
+    class Kind(object):
+        ADD = 0
+        SUB = 1
+        NO_CHANGE = 2
+        KINDS = 3
+        ERROR = 4
+
+    def __init__(self):
+        self._diffs = []
+        self._last_kind = Diff.Kind.ERROR
+        self._current_line = []
+
+    def add_char(self, kind, char):
+        """
+        Adds the char with Diff.Kind diff_kind to the Diff object.
+        """
+        if kind == self._last_kind:
+            self._current_line.append(char)
+        elif self._last_kind != Diff.Kind.ERROR:
+            self.finish_line()
+        else:
+            self._current_line = [char]
+        self._last_kind = kind
+
+    def finish_line(self):
+        """
+        Adds the current line to the diffs if its type is valid.
+        """
+        line = ''.join(self._current_line).strip()
+        self._diffs.append((self._last_kind, line))
+
 class DiffTool(object):
     """
     Solves the longest common subsequence problem for two strings to find
@@ -114,22 +146,23 @@ class DiffTool(object):
                 return self._backtrack(i-1, j, chars)
 
     def get_diff(self):
-        diff_chars = []
-        self._build_diff(len(self.str1)-1, len(self.str2)-1, diff_chars)
-        print diff_chars
+        diff_object = Diff()
+        self._build_diff(len(self.str1)-1, len(self.str2)-1, diff_object)
+        diff_object.finish_line()
+        print diff_object._diffs
 
     def _build_diff(self, i, j, diff):
         if i > 0 and j > 0 and self.str1[i] == self.str2[j]:
             self._build_diff(i-1, j-1, diff)
-            diff.append("  {}".format(self.str1[i]))
+            diff.add_char(Diff.Kind.NO_CHANGE, self.str1[i])
         elif j > 0 and (i == 0 or self._table[i][j-1] >= self._table[i-1][j]):
             self._build_diff(i, j-1, diff)
-            diff.append("  {}".format(self.str2[j]))
+            diff.add_char(Diff.Kind.ADD, self.str2[j])
         elif i > 0 and (j == 0 or self._table[i][j-1] < self._table[i-1][j]):
             self._build_diff(i-1, j, diff)
-            diff.append("- {}".format(self.str1[i]))
+            diff.add_char(Diff.Kind.SUB, self.str1[i])
         else:
-            diff.append("- {}".format(self.str1[0]))
+            diff.add_char(Diff.Kind.SUB, self.str1[0])
 
 def main(argv):
     """
