@@ -30,7 +30,12 @@ class Diff(object):
         Returns the longest continuous substring shared by
         both strings ending at the back.
         """
-        return ""
+        suffix = []
+        for (char1, char2) in zip(reversed(self.str1), reversed(self.str2)):
+            if char1 != char2:
+                break
+            suffix.insert(0, char1)
+        return "".join(suffix)
 
     def _compute_table(self, str1, str2):
         """
