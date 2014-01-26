@@ -113,11 +113,32 @@ class Diff(object):
             else:
                 return self._backtrack(i-1, j, chars)
 
+    def print_out(self):
+        self._print_out(len(self.str1)-1, len(self.str2)-1)
+
+    def _print_out(self, i, j):
+        if i > 0 and j > 0 and self.str1[i] == self.str2[j]:
+            self._print_out(i-1, j-1)
+            print "  {}".format(self.str1[i])
+        elif j > 0 and (i == 0 or self._table[i][j-1] >= self._table[i-1][j]):
+            self._print_out(i, j-1)
+            print "+ {}".format(self.str2[j])
+        elif i > 0 and (j == 0 or self._table[i][j-1] < self._table[i-1][j]):
+            self._print_out(i-1, j)
+            print "- {}".format(self.str1[i])
+        else:
+            print "- {}".format(self.str1[0])
+
 def main(argv):
     """
     Entry point.
     """
-    pass
+    with open("one.txt") as file1:
+        str1 = ''.join(file1.readlines())
+    with open("two.txt") as file2:
+        str2 = ''.join(file2.readlines())
+    diff = Diff(str1, str2)
+    diff.print_out()
 
 if __name__ == '__main__':
     main(sys.argv)
