@@ -1,11 +1,11 @@
-import diff
+from diff import DiffTool
 import unittest
 
 class DiffIdenticalStringsTest(unittest.TestCase):
 
     def setUp(self):
         self.str = "abcd"
-        self.diff = diff.Diff(self.str, self.str)
+        self.diff = DiffTool(self.str, self.str)
 
     def test_length_is_nonzero(self):
         self.assertGreater(self.diff.lcs_length(), 0)
@@ -20,13 +20,13 @@ class SharedSuffixTest(unittest.TestCase):
         self.suffix = "thisisareallylongsuffix"
         self.str1 = "aaaaaaaa" + self.suffix
         self.str2 = "bbbbbbbb" + self.suffix
-        self.diff = diff.Diff(self.str1, self.str2)
+        self.diff = DiffTool(self.str1, self.str2)
 
     def test_get_shared_suffix(self):
         self.assertEqual(self.diff._suffix, self.suffix)
 
     def test_no_shared_suffix(self):
-        self.diff = diff.Diff("abcd", "efgh")
+        self.diff = DiffTool("abcd", "efgh")
         self.assertEqual("", self.diff._suffix)
 
 class SharedPrefixTest(unittest.TestCase):
@@ -35,13 +35,13 @@ class SharedPrefixTest(unittest.TestCase):
         self.prefix = "thisisareallylongprefix"
         self.str1 = self.prefix + "aaaaaaaa"
         self.str2 = self.prefix + "bbbbbbbb"
-        self.diff = diff.Diff(self.str1, self.str2)
+        self.diff = DiffTool(self.str1, self.str2)
 
     def test_get_shared_prefix(self):
         self.assertEqual(self.diff._prefix, self.prefix)
 
     def test_no_shared_prefix(self):
-        self.diff = diff.Diff("abcd", "efgh")
+        self.diff = DiffTool("abcd", "efgh")
         self.assertEqual("", self.diff._prefix)
 
 class SharedPrefixSuffixTest(unittest.TestCase):

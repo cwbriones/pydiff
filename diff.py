@@ -3,7 +3,7 @@ Python implementation of diff.
 """
 import sys
 
-class Diff(object):
+class DiffTool(object):
     """
     Solves the longest common subsequence problem for two strings to find
     their difference.
@@ -137,7 +137,7 @@ def main(argv):
         str1 = ''.join(file1.readlines())
     with open("two.txt") as file2:
         str2 = ''.join(file2.readlines())
-    diff = Diff(str1, str2)
+    diff = DiffTool(str1, str2)
     diff.print_out()
 
 if __name__ == '__main__':
