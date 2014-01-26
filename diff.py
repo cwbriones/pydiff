@@ -113,21 +113,23 @@ class DiffTool(object):
             else:
                 return self._backtrack(i-1, j, chars)
 
-    def print_out(self):
-        self._print_out(len(self.str1)-1, len(self.str2)-1)
+    def get_diff(self):
+        diff_chars = []
+        self._build_diff(len(self.str1)-1, len(self.str2)-1, diff_chars)
+        print diff_chars
 
-    def _print_out(self, i, j):
+    def _build_diff(self, i, j, diff):
         if i > 0 and j > 0 and self.str1[i] == self.str2[j]:
-            self._print_out(i-1, j-1)
-            print "  {}".format(self.str1[i])
+            self._build_diff(i-1, j-1, diff)
+            diff.append("  {}".format(self.str1[i]))
         elif j > 0 and (i == 0 or self._table[i][j-1] >= self._table[i-1][j]):
-            self._print_out(i, j-1)
-            print "+ {}".format(self.str2[j])
+            self._build_diff(i, j-1, diff)
+            diff.append("  {}".format(self.str2[j]))
         elif i > 0 and (j == 0 or self._table[i][j-1] < self._table[i-1][j]):
-            self._print_out(i-1, j)
-            print "- {}".format(self.str1[i])
+            self._build_diff(i-1, j, diff)
+            diff.append("- {}".format(self.str1[i]))
         else:
-            print "- {}".format(self.str1[0])
+            diff.append("- {}".format(self.str1[0]))
 
 def main(argv):
     """
@@ -138,7 +140,7 @@ def main(argv):
     with open("two.txt") as file2:
         str2 = ''.join(file2.readlines())
     diff = DiffTool(str1, str2)
-    diff.print_out()
+    diff.get_diff()
 
 if __name__ == '__main__':
     main(sys.argv)
