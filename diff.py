@@ -22,9 +22,8 @@ class Diff(object):
         """
         if kind == self._last_kind:
             self._current_line.append(char)
-        elif self._last_kind != Diff.Kind.ERROR:
-            self.finish_line()
         else:
+            self.finish_line()
             self._current_line = [char]
         self._last_kind = kind
 
@@ -32,8 +31,23 @@ class Diff(object):
         """
         Adds the current line to the diffs if its type is valid.
         """
-        line = ''.join(self._current_line).strip()
-        self._diffs.append((self._last_kind, line))
+        if self._last_kind != Diff.Kind.ERROR:
+            line = ''.join(self._current_line).strip()
+            self._diffs.append((self._last_kind, line))
+
+    def print_out(self):
+        """
+        Prints out the diff.
+        """
+        leading_chars = { 
+                Diff.Kind.ADD: '+', 
+                Diff.Kind.SUB: '-', 
+                Diff.Kind.NO_CHANGE: ' ' }
+        for (kind, content) in self._diffs:
+            char = leading_chars[kind]
+            for line in content.split('\n'):
+                if line != '':
+                    print "{}  {}".format(char, line)
 
 class DiffTool(object):
     """
@@ -42,6 +56,8 @@ class DiffTool(object):
     """
 
     def __init__(self, str1, str2):
+        self._diff_object = None
+
         self.str1 = str1
         self.str2 = str2
 
@@ -146,23 +162,24 @@ class DiffTool(object):
                 return self._backtrack(i-1, j, chars)
 
     def get_diff(self):
-        diff_object = Diff()
-        self._build_diff(len(self.str1)-1, len(self.str2)-1, diff_object)
-        diff_object.finish_line()
-        print diff_object._diffs
+        if self._diff_object is None:
+            self._diff_object = Diff()
+            self._build_diff(len(self.str1)-1, len(self.str2)-1)
+            self._diff_object.finish_line()
+        return self._diff_object
 
-    def _build_diff(self, i, j, diff):
+    def _build_diff(self, i, j):
         if i > 0 and j > 0 and self.str1[i] == self.str2[j]:
-            self._build_diff(i-1, j-1, diff)
-            diff.add_char(Diff.Kind.NO_CHANGE, self.str1[i])
+            self._build_diff(i-1, j-1)
+            self._diff_object.add_char(Diff.Kind.NO_CHANGE, self.str1[i])
         elif j > 0 and (i == 0 or self._table[i][j-1] >= self._table[i-1][j]):
-            self._build_diff(i, j-1, diff)
-            diff.add_char(Diff.Kind.ADD, self.str2[j])
+            self._build_diff(i, j-1)
+            self._diff_object.add_char(Diff.Kind.ADD, self.str2[j])
         elif i > 0 and (j == 0 or self._table[i][j-1] < self._table[i-1][j]):
-            self._build_diff(i-1, j, diff)
-            diff.add_char(Diff.Kind.SUB, self.str1[i])
+            self._build_diff(i-1, j)
+            self._diff_object.add_char(Diff.Kind.SUB, self.str1[i])
         else:
-            diff.add_char(Diff.Kind.SUB, self.str1[0])
+            self._diff_object.add_char(Diff.Kind.SUB, self.str1[0])
 
 def main(argv):
     """
@@ -172,8 +189,10 @@ def main(argv):
         str1 = ''.join(file1.readlines())
     with open("two.txt") as file2:
         str2 = ''.join(file2.readlines())
-    diff = DiffTool(str1, str2)
-    diff.get_diff()
+    diff_tool = DiffTool(str1, str2)
+    the_diff = diff_tool.get_diff()
+
+    the_diff.print_out()
 
 if __name__ == '__main__':
     main(sys.argv)
