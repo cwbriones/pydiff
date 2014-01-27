@@ -29,25 +29,29 @@ class Diff(object):
 
     def finish_line(self):
         """
-        Adds the current line to the diffs if its type is valid.
+        Adds the current line to the list of diff chunks if its type is valid.
         """
         if self._last_kind != Diff.Kind.ERROR:
-            line = ''.join(self._current_line).strip()
+            line = ''.join(self._current_line)
             self._diffs.append((self._last_kind, line))
 
     def print_out(self):
         """
         Prints out the diff.
         """
+        print self._diffs
         leading_chars = { 
                 Diff.Kind.ADD: '+', 
                 Diff.Kind.SUB: '-', 
                 Diff.Kind.NO_CHANGE: ' ' }
-        for (kind, content) in self._diffs:
+        for (kind, run) in self._diffs:
             char = leading_chars[kind]
-            for line in content.split('\n'):
-                if line != '':
-                    print "{}  {}".format(char, line)
+            if run[-1] == '\n':
+                run = run[:-1]
+            if run[0] == '\n':
+                run = run[1:]
+            for line in run.split('\n'):
+                print "{}{}".format(char, line)
 
 class DiffTool(object):
     """
